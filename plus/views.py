@@ -59,6 +59,31 @@ def get_first_profile_id(service):
 
 
 
+QUERY_DIMENSIONS='ga:city,ga:region'
+QUERY_METRICS='ga:visits,ga:timeOnSite,ga:pageviewsPerVisit,ga:bounces'
+
+def get_api_query(service, table_id):
+  """Returns a query object to retrieve data from the Core Reporting API.
+
+  Args:
+    service: The service object built by the Google API Python client library.
+    table_id: str The table ID form which to retrieve data.
+  """
+
+  return service.data().ga().get(
+      ids=table_id,
+      start_date='2013-10-01',
+      end_date='2013-11-30',
+      metrics=QUERY_METRICS,
+      dimensions=QUERY_DIMENSIONS,
+      sort='-ga:visits',
+      filters='ga:country==United States',
+      start_index='1',
+      max_results='5000')
+
+
+
+
 
 @login_required
 def index(request):
@@ -73,12 +98,16 @@ def index(request):
     http = httplib2.Http()
     http = credential.authorize(http)
     service = build("analytics", "v3", http=http)
+    # alternative option to build a service, which is better???
     #service = hello_analytics_api_v3_auth.initialize_service(argparse.Namespace(auth_host_name='localhost', auth_host_port=[8080, 8090], logging_level='ERROR', noauth_local_webserver=False)    
     profile_id = get_first_profile_id(service)
 #    logging.info(activitylist)
 
+    query = get_api_query(service, 'ga:'+str(profile_id))
+    results = query.execute()
+    headers=QUERY_DIMENSIONS.split(',') + QUERY_METRICS.split(',')
     return render_to_response('plus/welcome.html', {
-                'profile_id': profile_id,
+                'headers': headers, 'profile_id': profile_id, 'results': results['rows']
                 })
 
 
