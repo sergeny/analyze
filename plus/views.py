@@ -62,7 +62,7 @@ def get_first_profile_id(service):
 QUERY_DIMENSIONS='ga:city,ga:region'
 QUERY_METRICS='ga:visits,ga:timeOnSite,ga:pageviewsPerVisit,ga:bounces'
 
-def get_api_query(service, table_id):
+def get_api_query(service, table_id, dt_from, dt_to):
   """Returns a query object to retrieve data from the Core Reporting API.
 
   Args:
@@ -72,8 +72,8 @@ def get_api_query(service, table_id):
 
   return service.data().ga().get(
       ids=table_id,
-      start_date='2013-10-01',
-      end_date='2013-11-30',
+      start_date=dt_from, #'2013-10-01',
+      end_date=dt_to, #'2013-11-30',
       metrics=QUERY_METRICS,
       dimensions=QUERY_DIMENSIONS,
       sort='-ga:visits',
@@ -83,10 +83,21 @@ def get_api_query(service, table_id):
 
 
 
+@login_required
+def index(request):
+  return render_to_response('plus/welcome.html', {})
+
+
+def conv_dt(s): # 16-10-2013 to 2013-10-16
+  l=[int(x) for x in s.split('-')] 
+  return '%04d-%02d-%02d' % (l[2],l[1],l[0])
 
 
 @login_required
-def index(request):
+def analyze(request):
+  dt_from = conv_dt(request.GET['dt_from'])
+  dt_to = conv_dt(request.GET['dt_to'])
+  
   storage = Storage(CredentialsModel, 'id', request.user, 'credential')
   credential = storage.get()
   if credential is None or credential.invalid == True:
@@ -103,11 +114,11 @@ def index(request):
     profile_id = get_first_profile_id(service)
 #    logging.info(activitylist)
 
-    query = get_api_query(service, 'ga:'+str(profile_id))
+    query = get_api_query(service, 'ga:'+str(profile_id), dt_from, dt_to)
     results = query.execute()
     headers=QUERY_DIMENSIONS.split(',') + QUERY_METRICS.split(',')
-    return render_to_response('plus/welcome.html', {
-                'headers': headers, 'profile_id': profile_id, 'results': results['rows']
+    return render_to_response('plus/results.html', {
+                'headers': headers, 'profile_id': profile_id, 'dt_from':dt_from, 'dt_to':dt_to, 'results': results['rows']
                 })
 
 

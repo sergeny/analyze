@@ -10,6 +10,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
     # Example:
     (r'^$', 'plus.views.index'),
+    (r'^analyze/$', 'plus.views.analyze'),
     (r'^oauth2callback', 'plus.views.auth_return'),
 
     # Uncomment the admin/doc line below and add 'django.contrib.admindocs'

@@ -8,20 +8,16 @@
     </style>
   </head>
   <body>
+    Welcome. 
     Google analytics profile: {{ profile_id }}
-    <table border=1>
-      <thead><tr>
-      {% for colname in headers %}
-        <td>{{ colname }}</td>
-      {% endfor %}
-      </tr></thead>
-      {% for row in results %}
-      <tr>
-        {% for entry in row %}
-        <td>{{ entry }}</td>
-        {% endfor %}
-      </tr>
-      {% endfor %}
-    </table>
+    <script type="text/javascript" src="static/datetimepicker.js"></script>
+    <form action="/analyze/" method="get">
+    <input id="dt_from" name="dt_from" type="text" size="25"><a href="javascript:NewCal('dt_from','ddmmyyyy')"><img src="static/cal.gif" width="16" height="16" border="0" alt="Start date"></a>
+    <br>
+    <input id="dt_to" name="dt_to" type="text" size="25"><a href="javascript:NewCal('dt_to','ddmmyyyy')"><img src="static/cal.gif" width="16" height="16" border="0" alt="End date"></a>
+    <input type="submit" value="Analyze">
+    </form>
+
+
   </body>
 </html>
