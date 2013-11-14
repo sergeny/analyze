@@ -1,17 +1,26 @@
 
 <html>
   <head>
-    <title>Your Google+ Activity</title>
+    <title>Google Analytics Reanalyzed</title>
     <style type=text/css>
       td  { vertical-align: top; padding: 0.5em }
       img { border:0 }
     </style>
   </head>
   <body>
+    Google analytics profile: {{ profile_id }}
     <table border=1>
-      {{ profile_id }}
-      {% for item in activitylist.items %}
-      <tr><td>{{ item.object.content|safe }}</td></tr>
+      <thead><tr>
+      {% for colname in headers %}
+        <td>{{ colname }}</td>
+      {% endfor %}
+      </tr></thead>
+      {% for row in results %}
+      <tr>
+        {% for entry in row %}
+        <td>{{ entry }}</td>
+        {% endfor %}
+      </tr>
       {% endfor %}
     </table>
   </body>
