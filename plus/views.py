@@ -92,8 +92,16 @@ def index(request):
   return render_to_response('plus/welcome.html', {})
 
 @login_required
-def search(request):
-  return render_to_response('plus/search.html', {})
+def search(request): # DUPLICATED CODE HERE
+  storage = Storage(CredentialsModel, 'id', request.user, 'credential')
+  credential = storage.get()
+  if credential is None or credential.invalid == True:
+    FLOW.params['state'] = xsrfutil.generate_token(settings.SECRET_KEY,
+                                                   request.user)
+    authorize_url = FLOW.step1_get_authorize_url()
+    return HttpResponseRedirect(authorize_url)
+  else:
+    return render_to_response('plus/search.html', {})
 
 def conv_dt(s): # 16-10-2013 to 2013-10-16
   l=[int(x) for x in s.split('-')] 
