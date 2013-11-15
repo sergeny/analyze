@@ -91,6 +91,9 @@ def get_api_query(service, table_id, dt_from, dt_to):
 def index(request):
   return render_to_response('plus/welcome.html', {})
 
+@login_required
+def search(request):
+  return render_to_response('plus/search.html', {})
 
 def conv_dt(s): # 16-10-2013 to 2013-10-16
   l=[int(x) for x in s.split('-')] 
@@ -172,4 +175,4 @@ def auth_return(request):
   credential = FLOW.step2_exchange(request.REQUEST)
   storage = Storage(CredentialsModel, 'id', request.user, 'credential')
   storage.put(credential)
-  return HttpResponseRedirect("/")
+  return HttpResponseRedirect("/search/")
