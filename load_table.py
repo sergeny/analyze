@@ -5,6 +5,9 @@
 import csv
 import MySQLdb
 from sys import argv
+import os
+
+namef = os.path.basename(argv[1])
 
 mydb = MySQLdb.connect(host='localhost',
   user='root',
@@ -12,9 +15,9 @@ mydb = MySQLdb.connect(host='localhost',
   db='data')
 cursor=mydb.cursor()
 
-csv_data = csv.reader(file(argv[1], 'rU'))
+csv_data = csv.reader(file(namef, 'rU'))
 headers = ["".join(entry.split()) for entry in csv_data.next()]
-table_name=argv[1][:argv[1].find('.')]
+table_name=namef[:namef.find('.')]
 
 # We assume that the first column is something like 'san-francisco-california', city-region from Google Analytics
 headers[0]='ID1'
