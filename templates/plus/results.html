@@ -8,6 +8,7 @@
     </style>
   </head>
   <body>
+
 {{request}}
     Welcome. 
 
@@ -17,7 +18,14 @@
     <script type="text/javascript" src="static/datetimepicker.js"></script>
     <a href="/">Search again</a>
 
+    <h2>Did you know that?...</h2>
+    <ul>
+    {% for insight in insights %}
+    <li>{{ insight }}</li>
+    {% endfor %}
+    </ul>
 
+    <br>
     <table border=1>
       <thead><tr>
       {% for colname in headers %}
