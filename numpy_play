@@ -1,0 +1,16 @@
+<function corrcoef at 0x1fef758>
+>>> np.corrcoef(pd.DataFrame([a[c], b[c]]).as_matrix())
+array([[ 1.,  1.],
+       [ 1.,  1.]])
+>>> a
+new-york    1
+boston      2
+la          3
+dtype: int64
+>>> b
+san-francisco    2
+la               5
+boston           1
+dtype: int64
+>>> c=a.keys().intersection(b.keys())
+>>> 
