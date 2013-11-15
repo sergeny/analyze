@@ -1,0 +1,5 @@
+Django==1.6
+google-api-python-client==1.2
+httplib2==0.8
+nltk==0.9.5
+wsgiref==0.1.2
