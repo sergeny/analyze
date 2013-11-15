@@ -97,6 +97,13 @@ def conv_dt(s): # 16-10-2013 to 2013-10-16
   return '%04d-%02d-%02d' % (l[2],l[1],l[0])
 
 
+# compute the correlation coefficient between two panda series
+# after alinging the entries with equal indices and discarding others
+# TODO:test
+def corrcoef_pd_series(a, b):
+  w=a.index.intersection(b.index)
+  return np.corrcoef(a[w], b[w])[0][1]
+
 @login_required
 def analyze(request):
   dt_from = conv_dt(request.GET['dt_from'])
@@ -129,19 +136,31 @@ def analyze(request):
 
     data=df_from_sql.load_all_tables_as_df()
 
+    corrs={}
+    insights=[]
     for c in df.columns:
       print 'Computing correlations with %s' % c
-      for category in data.keys(): # e.g. region_politics:
+      u=df[c]
+      for category in data.keys(): # e.g. region_politics: 
         dd=data[category]
         for c2 in dd.columns:
-          print 'Correlating it with %s/%s' % (category, c2)
+          v=dd[c2]
+          value=corrcoef_pd_series(u, v)
+          corrs[(category, c2)] = value
+          print 'Correlating it with %s/%s, %f' % (category, c2, value)
+    
+      minkey= min(corrs, key=corrs.get)
+      maxkey= max(corrs, key=corrs.get)
+      print 'Min correlation of %s: %s, %f' % (c, str(minkey), corrs[minkey])
+      print 'Max correlation of %s: %s, %f' % (c, str(maxkey), corrs[maxkey])
+      insights+=['Most of your %s come from %s'%(c,str(minkey)), 'Least of your %s come from %s'%(c, str(maxkey))]
 
-    import pdb; pdb.set_trace()
+
     # np.corrcoef(df['ga:visits'], df['ga:timeOnSite'])[0][1]
 
     headers=QUERY_DIMENSIONS.split(',') + QUERY_METRICS.split(',')
     return render_to_response('plus/results.html', {
-                'headers': headers, 'profile_id': profile_id, 'dt_from':dt_from, 'dt_to':dt_to, 'results': results['rows']
+                'headers': headers, 'profile_id': profile_id, 'dt_from':dt_from, 'dt_to':dt_to, 'results': results['rows'], 'insights': insights
                 })
 
 
