@@ -14,3 +14,9 @@ boston           1
 dtype: int64
 >>> c=a.keys().intersection(b.keys())
 >>> 
+
+b=pd.Series([3,1,4,6], index=['c', 'a', 'e', 'f']) 
+
+numpy.corrcoef(a[c], b[c])[0][1] is the answer (correlation)
+
+

@@ -3,6 +3,10 @@ import logging
 import httplib2
 import hello_analytics_api_v3_auth
 import argparse
+from slugify import slugify
+import numpy as np
+import pandas as pd
+import df_from_sql
 
 from apiclient.discovery import build
 from django.contrib.auth.decorators import login_required
@@ -27,8 +31,8 @@ CLIENT_SECRETS = os.path.join(os.path.dirname(__file__), '..', 'client_secrets.j
 FLOW = flow_from_clientsecrets(
     CLIENT_SECRETS,
     scope='https://www.googleapis.com/auth/analytics.readonly', 
-    redirect_uri='http://localhost:8000/oauth2callback')
-#     redirect_uri='http://li643-60.members.linode.com:8000/oauth2callback')
+#    redirect_uri='http://localhost:8000/oauth2callback')
+     redirect_uri='http://li643-60.members.linode.com:7999/oauth2callback')
 
 
 def get_first_profile_id(service):
@@ -116,6 +120,25 @@ def analyze(request):
 
     query = get_api_query(service, 'ga:'+str(profile_id), dt_from, dt_to)
     results = query.execute()
+    r=results['rows']
+    
+    rows=[slugify((x[0]+' '+x[1])) for x in r] # ['san-francisco-california', ...]
+
+    df=pd.DataFrame([x[2:] for x in r], index=rows, columns=QUERY_METRICS.split(','))
+    
+
+    data=df_from_sql.load_all_tables_as_df()
+
+    for c in df.columns:
+      print 'Computing correlations with %s' % c
+      for category in data.keys(): # e.g. region_politics:
+        dd=data[category]
+        for c2 in dd.columns:
+          print 'Correlating it with %s/%s' % (category, c2)
+
+    import pdb; pdb.set_trace()
+    # np.corrcoef(df['ga:visits'], df['ga:timeOnSite'])[0][1]
+
     headers=QUERY_DIMENSIONS.split(',') + QUERY_METRICS.split(',')
     return render_to_response('plus/results.html', {
                 'headers': headers, 'profile_id': profile_id, 'dt_from':dt_from, 'dt_to':dt_to, 'results': results['rows']
