@@ -6,6 +6,7 @@ import argparse
 from slugify import slugify
 import numpy as np
 import pandas as pd
+import collections
 import df_from_sql
 
 from apiclient.discovery import build
@@ -115,6 +116,17 @@ def corrcoef_pd_series(a, b):
   w=a.index.intersection(b.index)
   return np.corrcoef(a[w], b[w])[0][1]
 
+# a and b are pandas.Series indexed by e.g. 'san-francisco-california'
+# same as in corrcoef_pd_series above
+# a should have a metric for each such location (such as ga:visits), whereas
+# b should have some statistic, such as average commute time (or vice versa)
+# join them on common locations to obtain a list of pairs that can be graphed
+def join_pd_series_as_list(a, b):
+  w=a.index.intersection(b.index)
+  #assuming that a[w] and b[w] already contain numeric data, not strings
+  return [list(r) for r in pd.DataFrame({'metric':a[w], 'data':b[w]}).as_matrix()]
+
+
 
 # Query Google analytics and return results as a pandas.DataFrame
 # @param service      Google analytics API service
@@ -132,14 +144,16 @@ def get_metrics_from_ga(service, profile_id, dt_from, dt_to):
     query = get_api_query(service, 'ga:'+str(profile_id), dt_from, dt_to)
     results = query.execute()
     r=results['rows']
-    rows=[slugify((x[0]+' '+x[1])) for x in r] # ['san-francisco-california', ...]                                                        
+    rows=[slugify((x[0]+' '+x[1])) for x in r] # ['san-francisco-california', ...]                        
     df=pd.DataFrame([x[2:] for x in r], index=rows, columns=QUERY_METRICS.split(','))
+    # Google gives us strings. Convert to numeric type
+    # Not strictly necessary to do it here, as numpy correlation calculation will do fine
+    # But then we have to convert for graphing...
+    # Also, convert_objects probably creates a copy. Instead could replace
+    # x[2:] with [double(u) for u in x[2:]] in the line above. Is it faster?
+    df = df.convert_objects(convert_numeric=True)
     return results, df
   
-# metric_df is a pandas.DataFrame
-# data_df is a pandas.DataFrame returned by df_from_sql
-def ggg(data_df, metric_index):
-  pass # not implemented
 
 @login_required
 def analyze(request):
@@ -166,8 +180,10 @@ def analyze(request):
 
     data=df_from_sql.load_all_tables_as_df()
 
-    corrs={}      # e.g. corrs[('region_commute', 'AverageofWalk_to_work')] == 0.5
-    insights=[]   # strings
+    corrs={}       # e.g. corrs[('region_commute', 'AverageofWalk_to_work')] == 0.5
+    insights=[]    # strings
+
+    chart_lists=collections.defaultdict(list) # for each metric - list of points to plot
     # for all metrics such as ga:visits...
     for c in ga_df.columns[:1]:  # DEBUG LATER REMOVE [:1]
       print 'Computing correlations with %s' % c
@@ -176,6 +192,8 @@ def analyze(request):
         dd=data[category]
         for c2 in dd.columns: # e.g. AverageofWalk_to_work
           v=dd[c2]
+          
+          l=join_pd_series_as_list(u, v)
           value=corrcoef_pd_series(u, v)
           corrs[(category, c2)] = value
           print 'Correlating it with %s/%s, %f' % (category, c2, value)
@@ -184,15 +202,19 @@ def analyze(request):
       maxkey= max(corrs, key=corrs.get)
       print 'Min correlation of %s: %s, %f' % (c, str(minkey), corrs[minkey])
       print 'Max correlation of %s: %s, %f' % (c, str(maxkey), corrs[maxkey])
+      # let's graph
+      min_scattered_list = join_pd_series_as_list(u, data[minkey[0]][minkey[1]])
+      max_scattered_list = join_pd_series_as_list(u, data[maxkey[0]][maxkey[1]])
       insights+=['Most of your %s come from %s'%(c,str(minkey)), 'Least of your %s come from %s'%(c, str(maxkey))]
-
+      chart_lists[c] = max_scattered_list
 
     # np.corrcoef(ga_df['ga:visits'], ga_df['ga:timeOnSite'])[0][1]
 
     headers=QUERY_DIMENSIONS.split(',') + QUERY_METRICS.split(',')
    
     metrics=QUERY_METRICS.split(',')
-    choices = [(m, 'container-%s' % slugify(m)) for m in metrics] # e.g. [('ga:visits', 'container-ga-visits), ...]
+
+    choices = [(m, 'container-%s' % slugify(m), str(chart_lists[m])) for m in metrics] # e.g. [('ga:visits', 'container-ga-visits), ...]
 
     return render_to_response('plus/results.html', {
                 'headers': headers, 'profile_id': profile_id, 'dt_from':dt_from, 'dt_to':dt_to, 'results': ga_results['rows'], 'insights': insights, 'choices': choices
