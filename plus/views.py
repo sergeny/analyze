@@ -182,10 +182,11 @@ def analyze(request):
 
     corrs={}       # e.g. corrs[('region_commute', 'AverageofWalk_to_work')] == 0.5
     insights=[]    # strings
-
+    max_key=collections.defaultdict(list)
+    min_key=collections.defaultdict(list)
     chart_lists=collections.defaultdict(list) # for each metric - list of points to plot
     # for all metrics such as ga:visits...
-    for c in ga_df.columns[:1]:  # DEBUG LATER REMOVE [:1]
+    for c in ga_df.columns:  
       print 'Computing correlations with %s' % c
       u=ga_df[c]
       for category in data.keys(): # e.g. region_commute: 
@@ -200,6 +201,8 @@ def analyze(request):
     
       minkey= min(corrs, key=corrs.get)
       maxkey= max(corrs, key=corrs.get)
+      max_key[c] = maxkey
+      min_key[c] = minkey
       print 'Min correlation of %s: %s, %f' % (c, str(minkey), corrs[minkey])
       print 'Max correlation of %s: %s, %f' % (c, str(maxkey), corrs[maxkey])
       # let's graph
@@ -214,7 +217,7 @@ def analyze(request):
    
     metrics=QUERY_METRICS.split(',')
 
-    choices = [(m, 'container-%s' % slugify(m), str(chart_lists[m])) for m in metrics] # e.g. [('ga:visits', 'container-ga-visits), ...]
+    choices = [(m, max_key[m], 'container-%s' % slugify(m), str(chart_lists[m])) for m in metrics] # e.g. [('ga:visits', 'container-ga-visits), ...]
 
     return render_to_response('plus/results.html', {
                 'headers': headers, 'profile_id': profile_id, 'dt_from':dt_from, 'dt_to':dt_to, 'results': ga_results['rows'], 'insights': insights, 'choices': choices
