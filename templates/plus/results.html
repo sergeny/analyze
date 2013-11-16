@@ -5,7 +5,9 @@
     <style type=text/css>
       td  { vertical-align: top; padding: 0.5em }
       img { border:0 }
-    </style>
+      .max-chart-container-wrapper-class { width: 49%; float: left }
+      .min-chart-container-wrapper-class { width: 49%; float: right}
+   </style>
   </head>
   <body>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" ></script>
@@ -28,11 +30,13 @@
     </ul>
 
    
-    {% for ga_metric, data_title, chart_title, container_id, json_list_points_to_plot in choices %}
+    {% for ga_metric, data_title, chart_title, container_id, container_wrapper_class, json_list_points_to_plot in choices %}
+    <div id="{{container_id}}-wrapper" class="{{container_wrapper_class}}" > 
     <div id="{{container_id}}" style="height: 300px"></div>
       <div class="basic">   
         {% include 'plus/_chart.html' %} 
       </div>
+    </div>
     {% endfor %}
 
     <br>
