@@ -11,7 +11,7 @@
 $(function () {
 var ga_metric="{{ga_metric}}"; // Django templating
 var container_id="{{container_id}}"; // Django templating
-
+var data={{ json_list_points_to_plot }}; // Django templating
 
 
     $('#{{container_id}}').highcharts({
@@ -32,9 +32,11 @@ var container_id="{{container_id}}"; // Django templating
             }
         },
         series: [{
-            data: [[2,3],[4,5],[1,7],[3,2],[5,2]]
+            data: data
         }],
     }); 
+    // json_list_points_to_plot can be e.g. "[[2,3],[4,5],[1,7],[3,2],[5,2]]"
+
 });
 </script>
 
