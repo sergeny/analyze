@@ -217,7 +217,7 @@ def analyze(request):
    
     metrics=QUERY_METRICS.split(',')
 
-    choices = [(m, max_key[m], 'container-%s' % slugify(m), str(chart_lists[m])) for m in metrics] # e.g. [('ga:visits', 'container-ga-visits), ...]
+    choices = [(m, '%s, %s' % max_key[m], 'container-%s' % slugify(m), str(chart_lists[m])) for m in metrics] # e.g. [('ga:visits', 'container-ga-visits), ...]
 
     return render_to_response('plus/results.html', {
                 'headers': headers, 'profile_id': profile_id, 'dt_from':dt_from, 'dt_to':dt_to, 'results': ga_results['rows'], 'insights': insights, 'choices': choices
