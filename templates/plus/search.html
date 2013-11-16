@@ -8,8 +8,8 @@
     </style>
   </head>
   <body>
-    Welcome. 
-    Google analytics profile: {{ profile_id }}
+    Welcome, {{request.user}}.  (<a href="/accounts/logout">Logout</a>)<br>
+    Linked google analytics profile: {{ profile_id }}
     <script type="text/javascript" src="/static/datetimepicker.js"></script>
     <form action="/analyze/" method="get">
     <input id="dt_from" name="dt_from" type="text" size="25"><a href="javascript:NewCal('dt_from','ddmmyyyy')"><img src="/static//cal.gif" %}" width="16" height="16" border="0" alt="Start date"></a>
