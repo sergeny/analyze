@@ -28,7 +28,7 @@
     </ul>
 
    
-    {% for ga_metric, container_id in choices %}
+    {% for ga_metric, container_id, json_list_points_to_plot in choices %}
     <div id="{{container_id}}" style="height: 300px"></div>
       <div class="basic">   
         {% include 'plus/_chart.html' %} 
