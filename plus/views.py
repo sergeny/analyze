@@ -222,8 +222,8 @@ def analyze(request):
    
     metrics=QUERY_METRICS.split(',')
 
-    max_choices = [(m, '%s, %s' % max_key[m], max_insights[m], 'max-container-%s' % slugify(m), str(max_chart_lists[m])) for m in metrics] # e.g. [('ga:visits', 'container-ga-visits), ...]
-    min_choices = [(m, '%s, %s' % min_key[m], min_insights[m], 'min-container-%s' % slugify(m), str(min_chart_lists[m])) for m in metrics] # e.g. [('ga:visits', 'container-ga-visits), ...]    
+    max_choices = [(m, '%s, %s' % max_key[m], max_insights[m], 'max-container-%s' % slugify(m), 'max-chart-container-wrapper-class', str(max_chart_lists[m])) for m in metrics] # e.g. [('ga:visits', 'container-ga-visits), ...]
+    min_choices = [(m, '%s, %s' % min_key[m], min_insights[m], 'min-container-%s' % slugify(m), 'min-chart-container-wrapper-class', str(min_chart_lists[m])) for m in metrics] # e.g. [('ga:visits', 'container-ga-visits), ...]    
 
     #interleave the lists, so we first show max and min for ga:visits, etc.
     choices = [val for pair in zip(max_choices, min_choices) for val in pair]
