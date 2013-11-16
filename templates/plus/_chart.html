@@ -1,9 +1,7 @@
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" ></script>
-<script src="http://code.highcharts.com/highcharts.js"></script>
 
 
 
-
+{{ ga_metric }}
 
 
 <script type="text/javascript">
@@ -11,9 +9,12 @@
 
 
 $(function () {
+var ga_metric="{{ga_metric}}"; // Django templating
+var container_id="{{container_id}}"; // Django templating
 
 
-    $('#chart_container').highcharts({
+
+    $('#{{container_id}}').highcharts({
         chart: {
             type: 'scatter'
         },
@@ -27,7 +28,7 @@ $(function () {
         },
         yAxis: {
             title: {
-                text: 'ga:visits'
+                text: ga_metric
             }
         },
         series: [{
