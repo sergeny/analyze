@@ -209,7 +209,7 @@ def analyze(request):
       # let's graph
       min_scattered_list = join_pd_series_as_list(u, data[minkey[0]][minkey[1]])
       max_scattered_list = join_pd_series_as_list(u, data[maxkey[0]][maxkey[1]])
-      insights+=['Most of your %s come from %s'%(c,str(minkey)), 'Least of your %s come from %s'%(c, str(maxkey))]
+      insights+=['Most of your %s come from %s'%(c,str(maxkey)), 'Least of your %s come from %s'%(c, str(minkey))]
       max_chart_lists[c] = max_scattered_list
       min_chart_lists[c] = min_scattered_list
 
