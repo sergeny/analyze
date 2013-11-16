@@ -184,7 +184,8 @@ def analyze(request):
     insights=[]    # strings
     max_key=collections.defaultdict(list)
     min_key=collections.defaultdict(list)
-    chart_lists=collections.defaultdict(list) # for each metric - list of points to plot
+    max_chart_lists=collections.defaultdict(list) # for each metric - list of points to plot
+    min_chart_lists=collections.defaultdict(list)
     # for all metrics such as ga:visits...
     for c in ga_df.columns:  
       print 'Computing correlations with %s' % c
@@ -209,7 +210,8 @@ def analyze(request):
       min_scattered_list = join_pd_series_as_list(u, data[minkey[0]][minkey[1]])
       max_scattered_list = join_pd_series_as_list(u, data[maxkey[0]][maxkey[1]])
       insights+=['Most of your %s come from %s'%(c,str(minkey)), 'Least of your %s come from %s'%(c, str(maxkey))]
-      chart_lists[c] = max_scattered_list
+      max_chart_lists[c] = max_scattered_list
+      min_chart_lists[c] = min_scattered_list
 
     # np.corrcoef(ga_df['ga:visits'], ga_df['ga:timeOnSite'])[0][1]
 
@@ -217,7 +219,12 @@ def analyze(request):
    
     metrics=QUERY_METRICS.split(',')
 
-    choices = [(m, '%s, %s' % max_key[m], 'container-%s' % slugify(m), str(chart_lists[m])) for m in metrics] # e.g. [('ga:visits', 'container-ga-visits), ...]
+    max_choices = [(m, '%s, %s' % max_key[m], 'max-container-%s' % slugify(m), str(max_chart_lists[m])) for m in metrics] # e.g. [('ga:visits', 'container-ga-visits), ...]
+    min_choices = [(m, '%s, %s' % min_key[m], 'min-container-%s' % slugify(m), str(min_chart_lists[m])) for m in metrics] # e.g. [('ga:visits', 'container-ga-visits), ...]    
+
+    #interleave the lists, so we first show max and min for ga:visits, etc.
+    choices = [val for pair in zip(max_choices, min_choices) for val in pair]
+
 
     return render_to_response('plus/results.html', {
                 'headers': headers, 'profile_id': profile_id, 'dt_from':dt_from, 'dt_to':dt_to, 'results': ga_results['rows'], 'insights': insights, 'choices': choices
