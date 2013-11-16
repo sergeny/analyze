@@ -182,6 +182,8 @@ def analyze(request):
 
     corrs={}       # e.g. corrs[('region_commute', 'AverageofWalk_to_work')] == 0.5
     insights=[]    # strings
+    max_insights=collections.defaultdict(list)
+    min_insights=collections.defaultdict(list)
     max_key=collections.defaultdict(list)
     min_key=collections.defaultdict(list)
     max_chart_lists=collections.defaultdict(list) # for each metric - list of points to plot
@@ -209,7 +211,8 @@ def analyze(request):
       # let's graph
       min_scattered_list = join_pd_series_as_list(u, data[minkey[0]][minkey[1]])
       max_scattered_list = join_pd_series_as_list(u, data[maxkey[0]][maxkey[1]])
-      insights+=['Most of your %s come from %s'%(c,str(maxkey)), 'Least of your %s come from %s'%(c, str(minkey))]
+      max_insights[c]='Most of your %s come from %s, %s'%(c,maxkey[0],maxkey[1])
+      min_insights[c]='Least of your %s come from %s, %s'%(c,minkey[0],minkey[1])
       max_chart_lists[c] = max_scattered_list
       min_chart_lists[c] = min_scattered_list
 
@@ -219,11 +222,13 @@ def analyze(request):
    
     metrics=QUERY_METRICS.split(',')
 
-    max_choices = [(m, '%s, %s' % max_key[m], 'max-container-%s' % slugify(m), str(max_chart_lists[m])) for m in metrics] # e.g. [('ga:visits', 'container-ga-visits), ...]
-    min_choices = [(m, '%s, %s' % min_key[m], 'min-container-%s' % slugify(m), str(min_chart_lists[m])) for m in metrics] # e.g. [('ga:visits', 'container-ga-visits), ...]    
+    max_choices = [(m, '%s, %s' % max_key[m], max_insights[m], 'max-container-%s' % slugify(m), str(max_chart_lists[m])) for m in metrics] # e.g. [('ga:visits', 'container-ga-visits), ...]
+    min_choices = [(m, '%s, %s' % min_key[m], min_insights[m], 'min-container-%s' % slugify(m), str(min_chart_lists[m])) for m in metrics] # e.g. [('ga:visits', 'container-ga-visits), ...]    
 
     #interleave the lists, so we first show max and min for ga:visits, etc.
     choices = [val for pair in zip(max_choices, min_choices) for val in pair]
+    for c in metrics:
+      insights += [max_insights[c], min_insights[c]]
 
 
     return render_to_response('plus/results.html', {
