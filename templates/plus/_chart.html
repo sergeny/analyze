@@ -11,6 +11,7 @@
 $(function () {
 var ga_metric="{{ga_metric}}"; // Django templating; e.g. 'ga:visits'
 var data_title="{{data_title}}"; // Django templating; e.g. 'region_profession'
+var chart_title="{{chart_title}}"; // Django templating, e.g. 'Most of your ga:visits come from region_commute_time...'
 var container_id="{{container_id}}"; // Django templating; e.g. 'container-ga-visits'
 var data={{ json_list_points_to_plot }}; // Django templating; e.g. [[1,2], [3,4], [5,6]]
 
@@ -20,7 +21,7 @@ var data={{ json_list_points_to_plot }}; // Django templating; e.g. [[1,2], [3,4
             type: 'scatter'
         },
         title: {
-            text: 'Your best customers...'
+            text: chart_title
         },
         xAxis: {
             title: {
