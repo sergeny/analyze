@@ -90,7 +90,7 @@ def get_api_query(service, table_id, dt_from, dt_to):
 
 @login_required
 def index(request):
-  return render_to_response('plus/welcome.html', {})
+  return render_to_response('plus/welcome.html', {'request': request})
 
 @login_required
 def search(request): # DUPLICATED CODE HERE
@@ -102,7 +102,12 @@ def search(request): # DUPLICATED CODE HERE
     authorize_url = FLOW.step1_get_authorize_url()
     return HttpResponseRedirect(authorize_url)
   else:
-    return render_to_response('plus/search.html', {})
+    http = httplib2.Http()
+    http = credential.authorize(http)
+    service = build("analytics", "v3", http=http)
+    profile_id = get_first_profile_id(service)
+
+    return render_to_response('plus/search.html', {'request': request, 'profile_id': profile_id})
 
 def conv_dt(s): # 16-10-2013 to 2013-10-16
   l=[int(x) for x in s.split('-')] 
