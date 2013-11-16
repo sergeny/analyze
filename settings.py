@@ -12,8 +12,13 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'mydatabase'
+        'ENGINE': 'django.db.backends.mysql',
+#        'NAME': 'mydatabase',
+	'NAME': 'data',
+	'HOST': 'localhost',
+	'PORT': '3306',
+	'USER': 'root',
+	'PASSWORD': 'root'
         }
     }
 
@@ -62,6 +67,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware'
 )
 
 ROOT_URLCONF = 'urls'
@@ -70,7 +76,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates"
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    os.path.join(os.path.dirname(__file__), 'templates'),
+    os.path.join(os.path.dirname(__file__), 'templates')
 )
 
 INSTALLED_APPS = (
@@ -79,5 +85,6 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
-    'plus'
+    'plus',
+    'core',
 )
