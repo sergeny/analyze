@@ -1,0 +1,39 @@
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" ></script>
+<script src="http://code.highcharts.com/highcharts.js"></script>
+
+
+
+
+
+
+<script type="text/javascript">
+
+
+
+$(function () {
+
+
+    $('#chart_container').highcharts({
+        chart: {
+            type: 'scatter'
+        },
+        title: {
+            text: 'Your best customers...'
+        },
+        xAxis: {
+            title: {
+                text: 'region_profession'
+            }
+        },
+        yAxis: {
+            title: {
+                text: 'ga:visits'
+            }
+        },
+        series: [{
+            data: [[2,3],[4,5],[1,7],[3,2],[5,2]]
+        }],
+    }); 
+});
+</script>
+
