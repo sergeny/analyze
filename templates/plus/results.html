@@ -8,8 +8,10 @@
     </style>
   </head>
   <body>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" ></script>
+<script src="http://code.highcharts.com/highcharts.js"></script>
 
-{{request}}
+
     Welcome. 
 
 
@@ -25,11 +27,13 @@
     {% endfor %}
     </ul>
 
-    <div id="chart_container" style="height: 300px"></div>
    
-      {% include 'plus/_chart.html' %} 
-<div class="basic">   
- </div>
+    {% for ga_metric, container_id in choices %}
+    <div id="{{container_id}}" style="height: 300px"></div>
+      <div class="basic">   
+        {% include 'plus/_chart.html' %} 
+      </div>
+    {% endfor %}
 
     <br>
     <table border=1>
