@@ -149,12 +149,13 @@ def analyze(request):
 
     corrs={}
     insights=[]
-    for c in df.columns:
+    # for all metrics such as ga:visits...
+    for c in df.columns[:1]:  # DEBUG LATER REMOVE [:1]
       print 'Computing correlations with %s' % c
       u=df[c]
-      for category in data.keys(): # e.g. region_politics: 
+      for category in data.keys(): # e.g. region_commute: 
         dd=data[category]
-        for c2 in dd.columns:
+        for c2 in dd.columns: # e.g. AverageofWalk_to_work
           v=dd[c2]
           value=corrcoef_pd_series(u, v)
           corrs[(category, c2)] = value
@@ -170,8 +171,12 @@ def analyze(request):
     # np.corrcoef(df['ga:visits'], df['ga:timeOnSite'])[0][1]
 
     headers=QUERY_DIMENSIONS.split(',') + QUERY_METRICS.split(',')
+   
+    metrics=QUERY_METRICS.split(',')
+    choices = [(m, 'container-%s' % slugify(m)) for m in metrics] # e.g. [('ga:visits', 'container-ga-visits), ...]
+
     return render_to_response('plus/results.html', {
-                'headers': headers, 'profile_id': profile_id, 'dt_from':dt_from, 'dt_to':dt_to, 'results': results['rows'], 'insights': insights
+                'headers': headers, 'profile_id': profile_id, 'dt_from':dt_from, 'dt_to':dt_to, 'results': results['rows'], 'insights': insights, 'choices': choices
                 })
 
 
