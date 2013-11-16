@@ -8,9 +8,11 @@
     </style>
   </head>
   <body>
-    Welcome. 
-    Google analytics profile: {{ profile_id }}
+    Welcome, {{request.user}}.<br> 
+
     <a href="/search/"> SIGN IN WITH GOOGLE AND START ANALYZING</a>
+    <br>
+   ... or <a href="/accounts/logout">logout</a> ...<br>
 
 
   </body>
