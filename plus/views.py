@@ -115,6 +115,32 @@ def corrcoef_pd_series(a, b):
   w=a.index.intersection(b.index)
   return np.corrcoef(a[w], b[w])[0][1]
 
+
+# Query Google analytics and return results as a pandas.DataFrame
+# @param service      Google analytics API service
+# @param profile_id   Google analytics profile id
+# @param dt_from      String representing date from which to query data
+# @param dt_to        String representing date to which to query data
+#
+# @returns results, df
+#                     results   This is what ga returns. It has one row for each location. Each row is a list of numbers for each metric
+#
+#                     df   pandas.DataFrame with a column for each metric such as ga:visits and a row for each location,
+#                     such as 'san-francisco-california', identified by a pair of dimensions  (ga:region, ga:city)
+#                     index has strings such as 'san-francisco-california'; columns have strings such as 'ga:visits'
+def get_metrics_from_ga(service, profile_id, dt_from, dt_to):
+    query = get_api_query(service, 'ga:'+str(profile_id), dt_from, dt_to)
+    results = query.execute()
+    r=results['rows']
+    rows=[slugify((x[0]+' '+x[1])) for x in r] # ['san-francisco-california', ...]                                                        
+    df=pd.DataFrame([x[2:] for x in r], index=rows, columns=QUERY_METRICS.split(','))
+    return results, df
+  
+# metric_df is a pandas.DataFrame
+# data_df is a pandas.DataFrame returned by df_from_sql
+def ggg(data_df, metric_index):
+  pass # not implemented
+
 @login_required
 def analyze(request):
   dt_from = conv_dt(request.GET['dt_from'])
@@ -136,23 +162,16 @@ def analyze(request):
     profile_id = get_first_profile_id(service)
 #    logging.info(activitylist)
 
-    query = get_api_query(service, 'ga:'+str(profile_id), dt_from, dt_to)
-    results = query.execute()
-    r=results['rows']
-    
-    rows=[slugify((x[0]+' '+x[1])) for x in r] # ['san-francisco-california', ...]
-
-    df=pd.DataFrame([x[2:] for x in r], index=rows, columns=QUERY_METRICS.split(','))
-    
+    ga_results, ga_df = get_metrics_from_ga(service, profile_id, dt_from, dt_to)
 
     data=df_from_sql.load_all_tables_as_df()
 
-    corrs={}
-    insights=[]
+    corrs={}      # e.g. corrs[('region_commute', 'AverageofWalk_to_work')] == 0.5
+    insights=[]   # strings
     # for all metrics such as ga:visits...
-    for c in df.columns[:1]:  # DEBUG LATER REMOVE [:1]
+    for c in ga_df.columns[:1]:  # DEBUG LATER REMOVE [:1]
       print 'Computing correlations with %s' % c
-      u=df[c]
+      u=ga_df[c]
       for category in data.keys(): # e.g. region_commute: 
         dd=data[category]
         for c2 in dd.columns: # e.g. AverageofWalk_to_work
@@ -168,7 +187,7 @@ def analyze(request):
       insights+=['Most of your %s come from %s'%(c,str(minkey)), 'Least of your %s come from %s'%(c, str(maxkey))]
 
 
-    # np.corrcoef(df['ga:visits'], df['ga:timeOnSite'])[0][1]
+    # np.corrcoef(ga_df['ga:visits'], ga_df['ga:timeOnSite'])[0][1]
 
     headers=QUERY_DIMENSIONS.split(',') + QUERY_METRICS.split(',')
    
@@ -176,7 +195,7 @@ def analyze(request):
     choices = [(m, 'container-%s' % slugify(m)) for m in metrics] # e.g. [('ga:visits', 'container-ga-visits), ...]
 
     return render_to_response('plus/results.html', {
-                'headers': headers, 'profile_id': profile_id, 'dt_from':dt_from, 'dt_to':dt_to, 'results': results['rows'], 'insights': insights, 'choices': choices
+                'headers': headers, 'profile_id': profile_id, 'dt_from':dt_from, 'dt_to':dt_to, 'results': ga_results['rows'], 'insights': insights, 'choices': choices
                 })
 
 
