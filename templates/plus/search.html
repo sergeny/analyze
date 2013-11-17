@@ -1,13 +1,35 @@
+<html lang="en">
 
-<html>
-  <head>
-    <title>Google Analytics Reanalyzed</title>
-    <style type=text/css>
-      td  { vertical-align: top; padding: 0.5em }
-      img { border:0 }
-    </style>
+<head>	
+	
+	<meta charset="utf-8" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="apple-touch-fullscreen" content="YES">
+	<meta content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0" name="viewport">
+	<title>Hotspotr</title>
+	
+    <link rel="stylesheet" type="/static/css" href="css/jquery.fancybox-1.3.4.css" media="screen" />
+	<link href="/static/css/reset.css" rel="stylesheet" type="css">
+	<link href="/static/css/typography.css" rel="stylesheet" type="css" />
+	<link href="/static/css/ui.css" rel="stylesheet" type="css">
+	<link href="/static/css/960.css" rel="stylesheet" type="css">
+	<link href="/static/css/main.css" rel="stylesheet" type="css">
+	<link href="/satic/css/media_queries.css" rel="stylesheet" type="css">
 
-<script type="text/javascript">
+	<meta name="description" content="">
+	<meta name="keywords" content="">
+	
+	<!-- html5.js for IE less than 9 -->
+	<!--[if lt IE 9]>
+	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	
+	<!-- css3-mediaqueries.js for IE less than 9 -->
+	<!--[if lt IE 9]>
+	<script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script>
+	<![endif]-->
+	
+	<script type="text/javascript">
 
 /***********************************************
 * Remember Text INPUT field values- by JavaScriptKit.com
@@ -60,11 +82,24 @@ window.onload=recallinput
 
 </script>
 
-  </head>
-  <body>
-    Welcome, {{request.user}}.  (<a href="/accounts/logout">Logout</a>)<br>
-    Linked google analytics profile: {{ profile_id }}
-    <script type="text/javascript" src="/static/datetimepicker.js"></script>
+
+</head>
+<body>
+<header>
+    <section class="container_16">
+        
+        <div class="logo logo2"><a href="#" title="Hotspotr"><img src="/static/img/hotspotr_logo.png" alt="Hotspotr" /></a></div>
+
+		<div class="topnav">
+        <aside>
+        <p><a href="/accounts/logout" class="hotspotr_logout">Log out</a></p>
+        </aside>
+        </div>
+        
+    </section><!-- container_16 -->
+</header><!-- header -->
+
+   <script type="text/javascript" src="/static/datetimepicker.js"></script>
     <script type="text/javascript">
       function do_search(metrics) {
         document.getElementById("metrics").value=metrics;
@@ -72,15 +107,132 @@ window.onload=recallinput
       }
     </script>
 
-    <form id="searchform" action="/analyze/" method="get" onSubmit="rememberinput('dt_from', 'dt_to')">
-    <input id="dt_from" name="dt_from" type="text" size="25"><a href="javascript:NewCal('dt_from','ddmmyyyy')"><img src="/static//cal.gif" %}" width="16" height="16" border="0" alt="Start date"></a>
-    <br>
-    <input id="dt_to" name="dt_to" type="text" size="25"><a href="javascript:NewCal('dt_to','ddmmyyyy')"><img src="/static/cal.gif" %}" width="16" height="16" border="0" alt="End date"></a>
-`   <input id="metrics" name="metrics" type="hidden" size="256" value="ga:visits,ga:timeOnSite,ga:pageviewsPerVisit,ga:bounces">
-    <input type="submit" value="Analyze">
-    </form>
+<form></form>
 
-    <a href="#" onclick="do_search('ga:exits,ga:visits');">Search exits and visits</a>
-    <a href="#" onclick="do_search('ga:timeOnSite');">Search time on site</a>
-  </body>
+<section class="container_16">
+    	<div id="metric_header">
+    	<h2>Please pick the timeframe, and select a metric</h2>
+    	<p>(to find your best customers)</p></div>
+    	
+    <form id="searchform" action="/analyze/" method="get" onSubmit="rememberinput('dt_from', 'dt_to')">
+    <input id="dt_from" name="dt_from" type="text" size="25"><a href="javascript:NewCal('dt_from','ddmmyyyy')"><img src="/static/cal.gif" width="16" height="16" border="0" alt="Start date"></a>
+    <br>
+    <input id="dt_to" name="dt_to" type="text" size="25"><a href="javascript:NewCal('dt_to','ddmmyyyy')"><img src="/static/cal.gif" width="16" height="16" border="0" alt="End date"></a>
+   <input id="metrics" name="metrics" type="hidden" size="256" value="ga:visits,ga:timeOnSite,ga:pageviewsPerVisit,ga:bounces">
+    </form>
+    	
+    	<div class="time_selectsquare">
+	    	<aside>
+	    	<h2>Time On Site</h2>
+			<p>
+				Lorem ipsum dolor sit amet, cons
+				<br>
+				ectetur adipisicing elit, set do etiu
+				<br>
+				simond tempor incididunt ut
+				<br>
+				labore et dolor et. 				
+			</p>
+			<a href="#" onclick="do_search('ga:timeOnSite');" id="selectbtn">Select</a></aside>    
+			<img src="/static/img/metric_icon_time.png" alt="" id="metric_icon">	    	
+    	</div>
+        
+        <div class="views_selectsquare">
+	    	<aside>
+	    	<h2>Views Per Visit</h2>
+			<p>
+				Lorem ipsum dolor sit amet, cons
+				<br>
+				ectetur adipisicing elit, set do etiu
+				<br>
+				simond tempor incididunt ut
+				<br>
+				labore et dolor et. 				
+			</p>
+			<a href="#" onclick="do_search('ga:pageviewsPerVisit');" id="selectbtn">Select</a></aside>
+			<img src="/static/img/metric_icon_views.png" alt="" id="metric_icon">	    	
+    	</div>
+    	
+    	<div class="visitors_selectsquare">
+	    	<aside>
+	    	<h2>Visitors</h2>
+			<p>
+				Lorem ipsum dolor sit amet, cons
+				<br>
+				ectetur adipisicing elit, set do etiu
+				<br>
+				simond tempor incididunt ut
+				<br>
+				labore et dolor et. 				
+			</p>
+			<a href="#" onclick="do_search('ga:visits');" id="selectbtn">Select</a></aside>
+			<img src="/static/img/metric_icon_visitors.png" alt="" id="metric_icon">	    	
+    	</div>
+    	
+    	<div class="bounce_selectsquare">
+	    	<aside>
+	    	<h2>Time On Site</h2>
+			<p>
+				Lorem ipsum dolor sit amet, cons
+				<br>
+				ectetur adipisicing elit, set do etiu
+				<br>
+				simond tempor incididunt ut
+				<br>
+				labore et dolor et. 				
+			</p>
+			<a href="#" onclick="do_search('ga:bounces');" id="selectbtn">Select</a></aside>
+			<img src="/static/img/metric_icon_bounce.png" alt="" id="metric_icon">	    	
+    	</div>
+        
+        <div id="all_metric_btn">
+        <a href="#" onclick="do_search('ga:visits,ga:timeOnSite,ga:pageviewsPerVisit,ga:bounces');" id="selectbtn">All metrics</a></div>
+        
+  <footer>
+    
+        <div class="grid_16">
+        <div class="divider"></div>
+        
+        <aside>
+        <p class="hide_mobile2">
+        <a href="#" class="first">Home</a> | 
+        <a href="#">About</a> | 
+        <a href="#">Blog</a> | 
+        <a href="#">Our Team</a> |
+        <a href="#">ContactUs/Support</a> | 
+        <a href="#">Terms</a> | 
+        <a href="#">FAQ</a></p>
+        
+        <p class="show_mobile2">
+        <a href="#" class="first">Home</a> | 
+        <a href="#">About</a> | 
+        <a href="#">Blog</a> | 
+        <a href="#">Our Team</a>
+        <a href="#">ContactUs/Support</a> | 
+        <a href="#">Terms</a> | 
+        <a href="#">FAQ</a></p>
+        
+        <p><span>&copy; 2013 <a href="#">Contextuall</a> LLC All Rights Reserved</span></p>
+        </aside>
+        
+        <div class="socialmedia">
+        <ul>
+        <li><a href="#" title="Twitter">Twitter</a></li>
+        <li><a href="#" class="facebook" title="Facebook">Facebook</a></li>
+        <li><a href="#" class="pinterest" title="Pinterest">Pinterest</a></li>
+        </ul>
+        </div>
+        </div>
+        
+    </footer><!-- footer -->
+</section>
+
+    <!-- ==== script ==== -->
+    <script src="js/jquery-1.9.0.min.js"></script>
+    <script src="js/select_functions.js"></script> 
+    <script src="js/selectjquery.js"> </script>
+    <script src="js/jquery.fancybox-1.3.4.pack.js"></script>
+    
+    
+</body>
 </html>
