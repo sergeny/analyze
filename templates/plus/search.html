@@ -11,13 +11,22 @@
     Welcome, {{request.user}}.  (<a href="/accounts/logout">Logout</a>)<br>
     Linked google analytics profile: {{ profile_id }}
     <script type="text/javascript" src="/static/datetimepicker.js"></script>
-    <form action="/analyze/" method="get">
+    <script type="text/javascript">
+      function do_search(metrics) {
+        document.getElementById("metrics").value=metrics;
+        document.getElementById("searchform").submit();
+      }
+    </script>
+
+    <form id="searchform" action="/analyze/" method="get">
     <input id="dt_from" name="dt_from" type="text" size="25"><a href="javascript:NewCal('dt_from','ddmmyyyy')"><img src="/static//cal.gif" %}" width="16" height="16" border="0" alt="Start date"></a>
     <br>
     <input id="dt_to" name="dt_to" type="text" size="25"><a href="javascript:NewCal('dt_to','ddmmyyyy')"><img src="/static/cal.gif" %}" width="16" height="16" border="0" alt="End date"></a>
+`   <input id="metrics" name="metrics" type="hidden" size="256" value="ga:visits,ga:timeOnSite,ga:pageviewsPerVisit,ga:bounces">
     <input type="submit" value="Analyze">
     </form>
 
-
+    <a href="#" onclick="do_search('ga:exits,ga:visits');">Search exits and visits</a>
+    <a href="#" onclick="do_search('ga:timeOnSite');">Search time on site</a>
   </body>
 </html>

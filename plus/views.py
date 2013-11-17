@@ -81,7 +81,7 @@ def get_api_query(service, table_id, dt_from, dt_to):
       end_date=dt_to, #'2013-11-30',
       metrics=QUERY_METRICS,
       dimensions=QUERY_DIMENSIONS,
-      sort='-ga:visits',
+      sort='-ga:region,ga:city',
       filters='ga:country==United States',
       start_index='1',
       max_results='5000')
@@ -162,9 +162,12 @@ def get_metrics_from_ga(service, profile_id, dt_from, dt_to):
 
 @login_required
 def analyze(request):
+  global QUERY_METRICS
   dt_from = conv_dt(request.GET['dt_from'])
   dt_to = conv_dt(request.GET['dt_to'])
-  
+  if 'metrics' in request.GET:
+    QUERY_METRICS = request.GET['metrics']
+
   storage = Storage(CredentialsModel, 'id', request.user, 'credential')
   credential = storage.get()
   if credential is None or credential.invalid == True:
