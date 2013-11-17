@@ -113,13 +113,13 @@ window.onload=recallinput
     	<div id="metric_header">
     	<h2>Please pick the timeframe, and select a metric</h2>
     	<p>(to find your best customers)</p></div>
-    	
+<div id="form_hero">    	
     <form id="searchform" action="/analyze/" method="get" onSubmit="rememberinput('dt_from', 'dt_to')">
     <input id="dt_from" name="dt_from" type="text" size="25"><a href="javascript:NewCal('dt_from','ddmmyyyy')"><img src="/static/cal.gif" width="16" height="16" border="0" alt="Start date"></a>
     <br>
     <input id="dt_to" name="dt_to" type="text" size="25"><a href="javascript:NewCal('dt_to','ddmmyyyy')"><img src="/static/cal.gif" width="16" height="16" border="0" alt="End date"></a>
    <input id="metrics" name="metrics" type="hidden" size="256" value="ga:visits,ga:timeOnSite,ga:pageviewsPerVisit,ga:bounces">
-    </form>
+    </form></div>
     	
     	<div class="time_selectsquare">
 	    	<aside>

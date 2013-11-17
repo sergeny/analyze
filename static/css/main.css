@@ -30,8 +30,10 @@ footer .socialmedia ul li .pinterest{ background:url(../img/pinterest01.png) no-
 
 .btn a { padding: 0px;}
 
-.circle { background-color: #ff0000; opacity: .6; height: 500px; width: 500px; border-radius: 320px; margin: 110px -6px 0px; } 
-#circle_content {color: #ffffff; opacity: 1.0; position: absolute; top: 208px; left: 188px; }
+#form_hero { position: relative; left: -177px; }
+
+.circle { position: relative; background-color: rgba(255,0,0,0.6); height: 500px; width: 500px; border-radius: 320px; margin: 110px -6px 0px; } 
+#circle_content {color: #ffffff; opacity: 1.0; position: absolute; top: 95px; left: 99px; }
 #circle_content aside { width: 380px; margin-left: -42px; }
 #circle_content #head { font-size: 32px; text-align: center; padding-bottom: 20px; border-bottom: 1px solid #f7c7c7; }
 #circle_content #para { font-size: 19px; text-align: center; padding-top: 30px; padding-bottom: 30px; }
@@ -46,8 +48,8 @@ footer .socialmedia ul li .pinterest{ background:url(../img/pinterest01.png) no-
 
 .views_selectsquare { background-color: #f8f8f8; height: 177px; width: 580px; margin: 30px 195px 0px; border: 1px solid #dddede;}
 .views_selectsquare h2 { padding-bottom: 0px; }
-.views_selectsquare aside { padding-top: 15px; padding-left: 30px; }
-.views_selectsquare img {position: relative; left: 212px; top: -132px;}
+.views_selectsquare aside { padding-top: 15px; position: relative; left: 325px; }
+.views_selectsquare img {position: relative; left: -120px; top: -122px;}
 .views_selectsquare aside p { padding-bottom: 10px; }
 
 .visitors_selectsquare { background-color: #f8f8f8; height: 177px; width: 580px; margin: 30px 195px 0px; border: 1px solid #dddede;}
@@ -58,11 +60,13 @@ footer .socialmedia ul li .pinterest{ background:url(../img/pinterest01.png) no-
 
 .bounce_selectsquare { background-color: #f8f8f8; height: 177px; width: 580px; margin: 30px 195px 0px; border: 1px solid #dddede;}
 .bounce_selectsquare h2 { padding-bottom: 0px; }
-.bounce_selectsquare aside { padding-top: 15px; padding-left: 30px; }
-.bounce_selectsquare img {position: relative; left: 212px; top: -130px;}
+.bounce_selectsquare aside { padding-top: 15px; position: relative; left: 325px; }
+.bounce_selectsquare img {position: relative; left: -121px; top: -130px;}
 .bounce_selectsquare aside p { padding-bottom: 10px; }
 
 #metric_header { position: absolute; margin: 106px 192px 0px;}
 #metric_header h2 { font-size: 22px; padding-bottom: 0px; }
 
 #all_metric_btn {margin: 30px 224px 0px; }
+
+#searchform { position: absolute; top: 146px; left:	370px; }
