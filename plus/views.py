@@ -8,6 +8,8 @@ import numpy as np
 import pandas as pd
 import collections
 import df_from_sql
+import json
+from apiclient import errors
 
 from apiclient.discovery import build
 from django.contrib.auth.decorators import login_required
@@ -119,7 +121,10 @@ def conv_dt(s): # 16-10-2013 to 2013-10-16
 # TODO:test
 def corrcoef_pd_series(a, b):
   w=a.index.intersection(b.index)
-  return np.corrcoef(a[w], b[w])[0][1]
+  if len(w)>0:
+    return np.corrcoef(a[w], b[w])[0][1]
+  else: # No common locations to compute correlation
+    return 0.0
 
 # a and b are pandas.Series indexed by e.g. 'san-francisco-california'
 # same as in corrcoef_pd_series above
@@ -148,7 +153,12 @@ def join_pd_series_as_list(a, b):
 def get_metrics_from_ga(service, profile_id, dt_from, dt_to):
     query = get_api_query(service, 'ga:'+str(profile_id), dt_from, dt_to)
     results = query.execute()
-    r=results['rows']
+    if 'rows' not in results: # If the query returns nothing, do not set r=[].
+      # Just return here. Otherwise constructor DataFrame([], columns=[...]) raises ValueError
+      # because of shape mismatch, and if we use r=None, it is not iterable.
+      return results, pd.DataFrame(None, columns=QUERY_METRICS.split(','))
+
+    r = results['rows']
     rows=[slugify((x[0]+' '+x[1])) for x in r] # ['san-francisco-california', ...]                        
     df=pd.DataFrame([x[2:] for x in r], index=rows, columns=QUERY_METRICS.split(','))
     # Google gives us strings. Convert to numeric type
@@ -184,7 +194,27 @@ def analyze(request):
     profile_id = get_first_profile_id(service)
 #    logging.info(activitylist)
 
-    ga_results, ga_df = get_metrics_from_ga(service, profile_id, dt_from, dt_to)
+    try:
+      ga_results, ga_df = get_metrics_from_ga(service, profile_id, dt_from, dt_to)
+    except errors.HttpError, e:
+      try:
+        # Load Json body.
+        error = json.loads(e.content)
+        msg = ''
+        if 'error' in error:
+          print 'Error code: %s' % str(error['error'].get('code'))
+          msg = str(error['error'].get('message'))
+          print 'Error message: %s' % msg
+        else:
+          msg = str(error)
+          print msg
+        # More error information can be retrieved with error.get('errors').
+        return HttpResponseRedirect("/search/?error=%s" % msg)
+      except ValueError:
+        # Could not load Json body.
+        print 'HTTP Status code: %s' % str(e.resp.status)
+        print 'HTTP Reason: %s' % str(e.resp.reason)
+        return HttpResponseRedirect("/search/")
 
     data=df_from_sql.load_all_tables_as_df()
 
@@ -238,9 +268,11 @@ def analyze(request):
     for c in metrics:
       insights += [max_insights[c], min_insights[c]]
 
-
+    ga_rows=[]
+    if 'rows' in ga_results:
+      ga_rows=ga_results['rows']
     return render_to_response('plus/results.html', {
-                'headers': headers, 'profile_id': profile_id, 'dt_from':dt_from, 'dt_to':dt_to, 'results': ga_results['rows'], 'insights': insights, 'choices': choices
+                'headers': headers, 'profile_id': profile_id, 'dt_from':dt_from, 'dt_to':dt_to, 'results': ga_rows, 'insights': insights, 'choices': choices
                 })
 
 
