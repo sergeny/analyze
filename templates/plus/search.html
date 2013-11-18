@@ -111,6 +111,9 @@ window.onload=recallinput
 
 <section class="container_16">
     	<div id="metric_header">
+	{% if request.GET.error %}
+	  <script type="text/javascript">alert("{{ request.GET.error }}");</script>
+	{% endif %}
     	<h2>Please pick the timeframe, and select a metric</h2>
     	<p>(to find your best customers)</p></div>
 <div id="form_hero">    	
@@ -171,7 +174,7 @@ window.onload=recallinput
     	
     	<div class="bounce_selectsquare">
 	    	<aside>
-	    	<h2>Time On Site</h2>
+	    	<h2>Bounces</h2>
 			<p>
 				Lorem ipsum dolor sit amet, cons
 				<br>
